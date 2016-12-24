@@ -3,41 +3,43 @@ const inputBoxHtml = "<input id='search-box' type='text' style='position: fixed;
 var frag = document.createDocumentFragment();
 var tmpDiv = document.createElement("div");
 
-var searchItems = document.querySelectorAll(".searchable");
-//console.log(searchItems);
+var searchItems = Array.from(document.querySelectorAll(".searchable"));
 
 tmpDiv.innerHTML = inputBoxHtml;
 
 frag.appendChild(tmpDiv.firstChild);
 
-document.onkeyup = function(e) {
-    //console.log(e);
-    /*
-    console.log(e.key);
-    console.log(e.srcElement);
-    */
-    if (e.srcElement.id == "search-box") {
-        //console.log(e.srcElement.value);
-        for (var i = 0; i < searchItems.length; i++) {
-            //console.clear;
-            //console.log(searchItems[i].innerText.indexOf(e.srcElement.value));
+function findAncestor(el, cls) {
+	while ((el = el.parentElement) && !el.classList.contains(cls));
+	return el;
+}
 
-            if (searchItems[i].innerText.toLowerCase().indexOf(e.srcElement.value.toLowerCase()) == -1) {
-                //console.log(searchItems[i].innerText);
+document.onkeyup = function (e) {
 
-                if (searchItems[i].className.indexOf("hidden") == -1) {
-                    searchItems[i].className += " hidden";
-                }
-            } else {
-                searchItems[i].className = searchItems[i].className.replace("hidden", "");
-            }
-            //console.log(e.srcElement.value + ":    " + searchItems[i].className + "     " + searchItems[i].innerText.toLowerCase().indexOf(e.srcElement.value.toLowerCase()));
-        }
+	if (e.srcElement.id == "search-box") {
 
+		var toShow = searchItems.filter(function (val) {
+			return val.innerText.toLowerCase().indexOf(e.srcElement.value.toLowerCase()) > -1;
+		});
 
-    } else {
-        if (e.key.toLowerCase() == "m") {
-            document.body.insertBefore(frag, document.body.childNodes[0]);
-        }
-    }
+		var toHide = searchItems.filter(function (val) {
+			return val.innerText.toLowerCase().indexOf(e.srcElement.value.toLowerCase()) == -1;
+		});
+
+		toHide.forEach(function (y) {
+			var hiddenContainerElement = findAncestor(y, "searchable-container");
+			hiddenContainerElement.classList.add("hidden");
+		});
+
+		toShow.forEach(function (x) {
+			var visibleContainerElement = findAncestor(x, "searchable-container");
+			visibleContainerElement.classList.remove("hidden");
+		});
+
+	} else {
+		if (e.key.toLowerCase() == "m") {
+			document.body.insertBefore(frag, document.body.childNodes[0]);
+			document.body.querySelector("#search-box").focus();
+		}
+	}
 };
