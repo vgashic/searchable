@@ -8,3 +8,5 @@ Hit the <kbd>M</kbd> key, and search dialog will pop-up. All rows that do not co
 
 Elements that should be searched must have class <code>searchable</code>.  
 Elements that will be hidden or shown should have class <code>searchable-container</code>.
+
+Visit at https://vgashic.github.io/searchable/
